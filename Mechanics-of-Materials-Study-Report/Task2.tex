@@ -1,5 +1,6 @@
 \documentclass[12pt, a4paper]{ctexart}
-\usepackage{graphicx, natbib}
+\usepackage{graphicx, natbib, url}
+\bibliographystyle{plain}
 \usepackage{indentfirst, amsmath}
 \usepackage{tikz}
 %\usepackage{fancyhdr}
@@ -54,8 +55,8 @@
 \begin{figure}[ht]
 	\centering
 	\includegraphics[scale=0.8]{21.png}
-	\label{牵引向量的分解：应力分量}
-	\caption{text}
+	\label{fig1}
+	\caption{牵引向量的分解：应力分量}
 \end{figure}
 定义牵引矢量$ t $，这个矢量表征了在某参考平面上的一个单元体所受的应力和，即此单元体在此表面处所受的牵引应力。在与 $ e_3 $ 正交的平面上的牵引矢量可以写做
 \begin{equation}
@@ -123,7 +124,7 @@
 
 \section{柯西定律}
 
-对于更加一般的情况，将上面得到的结论进行推广，即给定了平面和平面上的应力状态，可以根据划分单元体确定平面上的牵引矢量。如图\ref{fig24}所示。$ \textbf{n} $ 代表平面上的法向量，应力状态在图中标明。
+对于更加一般的情况，将上面得到的结论进行推广，即给定了平面和平面上的应力状态，可以根据划分单元体确定平面上的牵引矢量。如图\ref{fig24}所示。$ \textbf{n} $ 代表平面上的法向量，应力状态在图中标明。\citep{auc}
 
 \begin{figure}
 	\centering
@@ -187,7 +188,7 @@ t_{i}=\sigma_{j i} n_{j}
 上式中，$ \cos \left(e_{i}, e_{j}^{\prime}\right) $ 代表两个向量之间夹角的余弦。综上，通过借助张量分析中的相关知识，可以实现已知应力状态下任意角度应力矩阵的求解。
 
 \section{主应力的求解}
-通过以上的推导，只需要找到特定的应力转换矩阵，就可以很容易的求出主应力。在截面为主平面时，牵引矢量与平面法向量共线，二者成正比，有如下关系
+通过以上的推导，只需要找到特定的应力转换矩阵，就可以很容易的求出主应力。\citep{mit}在截面为主平面时，牵引矢量与平面法向量共线，二者成正比，有如下关系
 \begin{equation} \label{eq3}
 \mathbf{t}=\sigma \mathbf{n}
 \end{equation}
@@ -227,5 +228,5 @@ t_{i}=\sigma_{j i} n_{j}
 \begin{array}{c}{I_{1}=\sigma_{11}+\sigma_{22}+\sigma_{33}} \\ {I_{2}=\sigma_{11} \sigma_{22}+\sigma_{22} \sigma_{33}+\sigma_{33} \sigma_{11}-\sigma_{12}^{2}-\sigma_{23}^{2}-\sigma_{31}^{2}} \\ {I_{3}=\sigma_{11} \sigma_{22} \sigma_{33}-\sigma_{11} \sigma_{23}^{2}-\sigma_{22} \sigma_{31}^{2}-\sigma_{33} \sigma_{12}^{2}+2 \sigma_{12} \sigma_{23} \sigma_{31}}\end{array}
 \end{gather}
 求解此三次方程便可求出任意三向应力状态下的正应力。三次方程的三个根就是三个主应力。显然，这三个主应力是应力矩阵的三个特征值，对应的截面坐标是应力矩阵的特征向量。
-
+\bibliography{ref}
 \end{document}

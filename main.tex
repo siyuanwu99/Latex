@@ -1,0 +1,326 @@
+\documentclass[aspectratio=169, 13pt,compress]{beamer}
+\hypersetup{pdfpagemode=FullScreen}
+\mode<presentation>
+%{
+%	\usetheme{WSY}
+%}
+\input{preamble.tex}
+\title{语音信号时域分类实验}
+\author{郜炫齐$～$刘贵涛$～$刘少腾$～$潘昊璇$~$吴思源}
+\date{2019年10月11日}
+
+\begin{document}
+\maketitle
+% \section*{Contents}
+\frame{
+\centering
+\tableofcontents[hideallsubsections]
+}
+
+\section{数据预处理}
+\frame{\sectionpage}
+
+\begin{frame}{加窗函数}
+加窗分帧实际上是对信号做一个滤波，两种窗都可以滤去高频分量
+\vspace{1cm}
+ \begin{columns}
+%  \uncover<1-2>
+ \column{0.3\textwidth}
+ 
+ \hlightb{ Square Window}
+    $$ w(n) = \left \{ \begin{array}{cc}
+        1 & 0 \leq n \leq N - 1 \\
+        0 & \textit{others} 
+    \end{array} \right.$$ 
+% \uncover<2>
+\column{0.7 \textwidth}
+
+\hlightb{Hanning Window}
+
+$$ w(n) = \left \{ \begin{array}{cc}
+     0.5（1- \cos{\frac{2 \pi n}{N -1 }}） & 0 \leq n \leq N -1  \\
+     0 & \textit{others}
+\end{array}
+\right. $$
+ \end{columns}
+ 
+\end{frame}{}
+\begin{frame}[center]{音频处理}
+\centering
+    采用双门限方法剪辑音频数据，取出有效部分\par
+    帧率设置为每秒 85 帧 \par
+    \vspace{1.0cm}
+    将采集到的每类 100 个数据打乱之后划分训练集和测试集 \par
+    \vspace{0.5cm}
+    \begin{tabular}{c|c|c}
+        训练集 & 验证集 & 测试集 \\ \hline
+         850 & 100 & 50
+    \end{tabular}
+\end{frame}
+
+\frame[containsverbatim]{
+\frametitle{特征提取}
+\framesubtitle{提取时域序列统计特征}
+
+\begin{minted}{python}
+func = lambda x: [np.max(x), np.std(x), np.mean(x)]
+feature = np.hstack([
+            func(square_energy),
+            func(hanning_energy),
+            func(square_azrate),
+            func(hanning_azrate),
+            func(square_data),
+            func(hanning_data),
+            [upper_rate]
+        ])
+\end{minted}
+}
+
+\frame[containsverbatim]{
+\frametitle{特征提取}
+\framesubtitle{一点说明}
+\centering
+\begin{enumerate}
+    \item 全局特征：均值、方差、极大值
+    \item 局部特征：某一部分的值
+\end{enumerate}{}
+\vspace{2cm}
+经过实验发现采用序列全局特征进行分类效果更优
+
+}
+
+
+\section{分类器选择}
+\frame{\sectionpage}
+
+\frame{
+\centering
+\begin{enumerate}
+    \item 决策树
+    \item 支持向量机
+    \item 朴素贝叶斯
+\end{enumerate}{}
+}
+
+
+\begin{frame}{决策树}
+\begin{tikzpicture}
+  [
+    grow                    = right,
+    sibling distance        = 6em,
+    level distance          = 10em,
+    edge from parent/.style = {draw, -latex},
+    every node/.style       = {font=\footnotesize},
+    sloped
+  ]
+  \node [root] {Feature $ (1 \times 19) $}
+    child { node  {Assigned to \textbf{Class 1}}
+      edge from parent node [below] { $x_1\leq 0.05 $} }
+    child { node [dummy] {}
+      child { node [dummy] {}
+        child { node  {Assigned to \textbf{Class 5}}
+          edge from parent node [below] {$x_{19} < 0.2$} }
+        child { node  {Assigned to \textbf{Class 1}}
+          edge from parent node [above] {$x_{18} \leq 0.35$}}
+        child { node  {Assigned to \textbf{Class 8}}
+                edge from parent node [above] {$0.2\geq x_{19} < 0.35$} }
+        edge from parent node [below] {$x_5> 0.7$} }
+      child { node {Assigned to \textbf{Class 4}}
+              edge from parent node [above, align=center]
+                {$x_5\leq 0.7$}}
+              edge from parent node [above] {$x_1\geq 0.05$} };
+\end{tikzpicture}
+$$H\left(X_{m}\right)=-\sum_{k} p_{m k} \log \left(p_{m k}\right)$$
+\end{frame}
+
+
+\begin{frame}{支持向量机}
+
+\centering
+    \begin{tikzpicture}[&gt;=stealth']
+  % Draw axes
+  \draw [&lt;-&gt;,thick] (0,5) node (yaxis) [above] {$y$}
+        |- (5,0) node (xaxis) [right] {$x$};
+  % draw line
+  \draw (0,-1) -- (5,4); % y=x-1
+  \draw[dashed] (-1,0) -- (4,5); % y=x+1
+  \draw[dashed] (2,-1) -- (6,3); % y=x-3
+  % \draw labels
+  \draw (3.5,3) node[rotate=45,font=\small] 
+        {$\mathbf{w}\cdot \mathbf{x} + b = 0$};
+  \draw (2.5,4) node[rotate=45,font=\small] 
+        {$\mathbf{w}\cdot \mathbf{x} + b = 1$};
+  \draw (4.5,2) node[rotate=45,font=\small] 
+        {$\mathbf{w}\cdot \mathbf{x} + b = -1$};
+  % draw distance
+  \draw[dotted] (4,5) -- (6,3);
+  \draw (5.25,4.25) node[rotate=-45] {$\frac{2}{\Vert \mathbf{w} \Vert}$};
+  \draw[dotted] (0,0) -- (0.5,-0.5);
+  \draw (0,-0.5) node[rotate=-45] {$\frac{b}{\Vert \mathbf{w} \Vert}$};
+  \draw[-&gt;] (2,1) -- (1.5,1.5);
+  \draw (1.85,1.35) node[rotate=-45] {$\mathbf{w}$};
+  % draw negative dots
+  \fill[red] (0.5,1.5) circle (3pt);
+  \fill[red]   (1.5,2.5)   circle (3pt);
+  \fill[black] (1,2.5)     circle (3pt);
+  \fill[black] (0.75,2)    circle (3pt);
+  \fill[black] (0.6,1.9)   circle (3pt);
+  \fill[black] (0.77, 2.5) circle (3pt);
+  \fill[black] (1.5,3)     circle (3pt);
+  \fill[black] (1.3,3.3)   circle (3pt);
+  \fill[black] (0.6,3.2)   circle (3pt);
+  % draw positive dots
+  \draw[red,thick] (4,1)     circle (3pt); 
+  \draw[red,thick] (3.3,.3)  circle (3pt); 
+  \draw[black]     (4.5,1.2) circle (3pt); 
+  \draw[black]     (4.5,.5)  circle (3pt); 
+  \draw[black]     (3.9,.7)  circle (3pt); 
+  \draw[black]     (5,1)     circle (3pt); 
+  \draw[black]     (3.5,.2)  circle (3pt); 
+  \draw[black]     (4,.3)    circle (3pt); 
+\end{tikzpicture}
+\end{frame}{}
+
+\begin{frame}{朴素贝叶斯}
+这是一种基于贝叶斯定理的分类算法。基本假设是特征之间\hlight{相互独立}
+\footnote{条件独立性假设} \par
+\vspace{0.5cm}
+ $$ {P\left(y | x_{1}, \ldots, x_{n}\right) \propto P(y) \prod_{i=1}^{n} P\left(x_{i} | y\right)}  $$
+ 
+ $$ \hat{y}=\arg \max _{y} P(y) \prod_{i=1}^{n} P\left(x_{i} | y\right) $$
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Codes}
+\framesubtitle{Talk is cheap, show me the code.}
+\begin{minted}{python}
+    if self.classifier == 'lsvm':
+        clf = sklearn.svm.LinearSVC()
+    elif self.classifier == 'ksvm':
+        clf = sklearn.svm.SVC(kernel='rbf', gamma='scale')
+        # kernel: ‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’
+        # gamma: 'auto' 'scale'
+    elif self.classifier == 'dctree':
+        clf = sklearn.tree.DecisionTreeClassifier()
+    else:
+        clf = []
+        assert 0, "ERROR"
+\end{minted}
+\end{frame}
+
+\begin{frame}{方法比较}
+    两种方法的比较
+    \vspace{0.8cm}
+    \hspace{1.0cm}\begin{itemize}
+        \item [SVM] 测试集上不一定收敛。数据必须是线性可分的。或者必须能够在超平面上线性可分
+        \item[决策树] 一定收敛
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    实验结果：在训练集上SVM类方法 比较难收敛，在验证集上表现也非常不好。但是决策树类方法在验证集上表现非常好。
+\end{frame}
+
+\begin{frame}{各种方法比较}
+\begin{center}
+    \begin{tabular}{l|c}
+        \hlightb{方法} & \hlightb{得分} \\ \hline
+        决策树 & 70 $\sim$ 80 \\ 
+        支持向量机 & 60 $\sim$ 70 \\ 
+        朴素贝叶斯 & 40 $\sim$ 50 \\
+    \end{tabular}
+\end{center}
+    
+\end{frame}
+
+\section{多分类方法}
+\frame{\sectionpage}
+
+\begin{frame}{现有的多分类方法}
+    \begin{itemize}
+        \item One - vs - Rest  $~~\Longrightarrow~~$  正负样本不均衡的问题
+        \item One - vs - One  $ ~~\Longrightarrow~~$  计算量可能过大，分类器过多
+        \item Error-Correcting Output Codes
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{ECOC}
+\framesubtitle{Error-Correcting Output Codes }
+    将多分类问题转化为多个二分类问题，使用 $ m $ 个分类器去解决这 $ m $ 个问题，然后将各个分类器的结果编成一组二进制码。通过对比码表来确定最终类别。
+    \vspace{0.8cm}
+    \begin{block}{优点}
+    有些分类器分错也能得到尽可能正确的结果
+    \end{block}
+    \vspace{.8cm}
+    \centering{
+    \hlight{但不是任意生成的二进制码都有自纠错性的}}
+\end{frame}    
+
+
+\begin{frame}{实验}
+使用我们目前实验中表现最优的算法（决策树算法），训练40个分类器，然后选取验证集中表现最优的10个分类器进行测试，计算准确率
+ \vspace{.8cm}
+\begin{table}[]
+\begin{tabular}{c|cccccccccl}
+\cline{1-11}
+分类器 & 11.  & 59.  & 29.  & 56.  & 57.  & 4.   & 16.  & 22.  & 26.  & 48.  \\ \cline{1-11}
+准确率 & 0.88 & 0.88 & 0.87 & 0.86 & 0.86 & 0.84 & 0.84 & 0.84 & 0.84 & 0.84 \\ \cline{1-11}
+\end{tabular}
+\end{table}
+ \vspace{.8cm}
+    \centering{
+    \hlight{但是最终准确率只有 $0.60$}}
+\end{frame}{}
+
+\begin{frame}{合适的ECOC码}
+\framesubtitle{使列之间的 Hamming 距离最大，更高的容错率}
+    \begin{itemize}
+        \item  $ 3\leq k \leq 7$  Exhausive Codes(EC)
+        \item $ 8 \leq k \leq 11$ Column Selection From Exhausive Codes(CSEC)
+        \item $k > 11$ 暴力搜索$~ \Longrightarrow~$随机梯度下降方法
+        \item $k>11$ BCE 方法
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Exhausive Codes}
+    \begin{table}[]
+\begin{tabular}{llllllllllllllll}
+\multicolumn{1}{c}{}   & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{3} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{5} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{7} & \multicolumn{1}{c}{8} & \multicolumn{1}{c}{9} & 10 & 11 & 12 & 13 & 14 & 15 \\ \cline{2-16} 
+\multicolumn{1}{c|}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{0} & 0  & 0  & 0  & 0  & 0  & 0  \\
+\multicolumn{1}{l|}{2} & 0                     & 0                     & 0                     & 0                     & 1                     & 1                     & 1                     & 1                     & 0                     & 0  & 0  & 1  & 1  & 1  & 1  \\
+\multicolumn{1}{l|}{3} & 1                     & 1                     & 1                     & 1                     & 0                     & 0                     & 0                     & 0                     & 1                     & 1  & 1  & 0  & 0  & 0  & 0  \\
+\multicolumn{1}{l|}{4} & 0                     & 0                     & 1                     & 1                     & 0                     & 0                     & 1                     & 1                     & 0                     & 0  & 1  & 0  & 0  & 1  & 1 
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{最终实验结果}
+\framesubtitle{序列特征 + 决策树 + ECOC码}
+\centering
+
+    \Huge Accuracy \hspace{4cm} \hlightb{0.80}
+\end{frame}
+
+\begin{frame}{参考工具箱}
+\begin{itemize}
+    \item 提特征$~ \Longrightarrow~$ \hlightb{tsfresh} \footnote{ \url{https://tsfresh.readthedocs.io/en/latest/}}
+    \item 机器学习工具箱$~ \Longrightarrow~$ \hlightb{sci-kit learn} \footnote{ \url{https://scikit-learn.org/}}
+    \item 语音信号处理$~ \Longrightarrow~$ \hlightb{librosa} \footnote{ \url{https://librosa.github.io/librosa/install.html}}
+
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}{开源地址}
+    \par
+    \url{https://github.com/edmundwsy/ASR-for-chinese-number}
+\end{frame}
+
+
+\begin{frame}
+    \centering
+    \Huge
+    \textcolor{DoderBlue}{谢谢大家！}
+\end{frame}
+
+\end{document}
+    

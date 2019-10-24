@@ -1,0 +1,65 @@
+% including all the requirements in this project
+% copied from https://www.overleaf.com/latex/templates/dead-physicists-society-presentation-template/zqmtrkmgxzqz
+
+
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{physics}  % add physics support
+\usepackage{csquotes}  % inline and display quotations
+%\usepackage{tensor}  % add tensor support for math
+\usepackage[thicklines]{cancel}
+\usepackage{tcolorbox}
+%\usepackage{pstricks}
+\usepackage{multicol}
+\usepackage{xeCJK}
+\usepackage{fontspec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{sourcecodepro}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{minted}
+
+
+\renewcommand{\CancelColor}{\color{royalblue}}
+
+
+%%%%%  Highlights
+
+
+%%%%% Math symbols
+\newcommand{\scriptr}{\mathcalligra{r}\,}
+\newcommand{\boldscriptr}{\pmb{\mathcalligra{r}}\,}
+\def\rc{\scriptr}
+\def\brc{\boldscriptr}
+\def\hrc{\hat\brc}
+\newcommand{\ie}{\emph{i.e.}} %id est
+\newcommand{\eg}{\emph{e.g.}} %exempli gratia
+\newcommand{\rtd}[1]{\ensuremath{\left\lfloor #1 \right\rfloor}}
+\newcommand{\dirac}[1]{\ensuremath{\delta \left( #1 \right)}}
+\newcommand{\diract}[1]{\ensuremath{\delta^3 \left( #1 \right)}}
+\newcommand{\e}{\ensuremath{\epsilon_0}}
+\newcommand{\m}{\ensuremath{\mu_0}}
+\newcommand{\V}{\ensuremath{\mathcal{V}}}
+\newcommand{\prnt}[1]{\ensuremath{\left(#1\right)}} %parentheses
+\newcommand{\colch}[1]{\ensuremath{\left[#1\right]}} %square brackets
+\newcommand{\chave}[1]{\ensuremath{\left\{#1\right\}}}  %curly brackets
+
+\makeatletter
+\newcommand{\mybox}[1]{%
+  \setbox0=\hbox{#1}%
+  \setlength{\@tempdima}{\dimexpr\wd0+13pt}%
+  \begin{tcolorbox}[colback=DeepSkyBlue,colframe=DeepSkyBlue,boxrule=0.5pt,arc=4pt,
+      left=6pt,right=6pt,top=6pt,bottom=6pt,boxsep=0pt,width=\@tempdima]
+    \textcolor{white}{#1}
+  \end{tcolorbox}
+}
+\makeatother
+
+
+\tikzset{
+	dummy/.style    = {circle,draw}
+}
+
+
+

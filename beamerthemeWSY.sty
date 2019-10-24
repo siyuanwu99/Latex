@@ -1,0 +1,88 @@
+% beamerthemeWSY.sty v1.0.0
+%
+% Copyright (C)
+%     2011 -- 2018, multiple1902 (Weisi Dai) <multiple1902@gmail.com>
+%     2019 -- present, edmundwsy <edmundwsy@qq.com>
+% ----------------------------------------------------------------------
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any later
+% version. This version of this license is in
+%    http://www.latex-project.org/lppl/lppl-1-3c.txt
+% and the latest version of this license is in
+%    http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is edmundwsy.
+%
+% ----------------------------------------------------------------------
+%
+\ProvidesPackage{beamerthemeWSY}
+
+\useoutertheme{split}
+\useinnertheme{circles}
+\usefonttheme{structurebold}
+
+
+%%%%% define colors
+\definecolor{EdgeGray}{HTML}{363636}
+\definecolor{royalblue}{HTML}{4169E1}
+\definecolor{DeepSkyBlue}{HTML}{00BFFF}
+\definecolor{MidnightBlue}{HTML}{191970}
+\definecolor{Blue}{HTML}{007FFF}
+\definecolor{Navy}{HTML}{000080}
+\definecolor{MediumBlue}{HTML}{0000CD}
+\definecolor{DoderBlue}{HTML}{1E90FF}
+
+
+
+%%%%% set beamer themes
+\usecolortheme[named=Blue]{structure}
+\usecolortheme{orchid}
+\usecolortheme{whale}
+\setbeamercolor{alerted text}{fg=royalblue}
+\setbeamercolor{block title alerted}{bg=alerted text.fg!90!black}
+\setbeamercolor{block title example}{bg=lightorange!60!black}
+\setbeamercolor{background canvas}{bg=EdgeGray}
+\setbeamercolor{normal text}{bg=EdgeGray, fg=white}
+\usefonttheme{structuresmallcapsserif}
+
+
+\setbeamertemplate{footline}
+        {
+      \leavevmode%
+      \hbox{%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}  %
+        \usebeamerfont{author in head/foot}\insertshortauthor %~~(\insertshortinstitute)
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+        \usebeamerfont{title in head/foot}\insertshorttitle
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+        \usebeamerfont{date in head/foot}\insertshortdate{}%\hspace*{2em}
+
+    %#turning the next line into a comment, erases the frame numbers
+      \end{beamercolorbox}}%
+      \vskip0pt%
+    }
+
+\setbeamertemplate{blocks}[rectangle]
+\setbeamercovered{dynamic}
+
+\setbeamertemplate{section page}
+{
+	\begin{centering}
+		\begin{beamercolorbox}[sep=27pt,center]{part title}
+			\usebeamerfont{section title}\insertsection\par
+			\usebeamerfont{subsection title}\insertsubsection\par
+		\end{beamercolorbox}
+	\end{centering}
+}
+
+\newcommand{\hlight}[1]{\textcolor{DoderBlue!50}{#1}}
+\newcommand{\hlightb}[1]{\textcolor{DoderBlue!50!royalblue}{#1}}
+\newcommand{\hlighta}[1]{\colorbox{black}{#1}}
